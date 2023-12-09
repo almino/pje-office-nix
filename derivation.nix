@@ -1,24 +1,18 @@
-{ autoPatchelfHook
-, dpkg
+{ dpkg
+, fetchurl
 , glib
 , glibc
-, fetchurl
-, gnutar
-, gzip
 , lib
-, libredirect
-, makeWrapper
-, stdenv
-, wrapGAppsHook
 , libsecret
 , libuuid
+, stdenv
 , systemd
+, wrapGAppsHook
 }:
 
 stdenv.mkDerivation rec {
   pname = "pje-office";
   version = "1.0.28";
-
 
   rpath = lib.makeLibraryPath [
     glib
@@ -41,13 +35,13 @@ stdenv.mkDerivation rec {
 
   dontUnpack = true;
 
-  unpackPhase = ''
-    runHook preUnpack
+  # unpackPhase = ''
+  #   runHook preUnpack
 
-    dpkg -x $src ./pje-office-src
+  #   dpkg -x $src ./pje-office-src
 
-    runHook postUnpack
-  '';
+  #   runHook postUnpack
+  # '';
 
   installPhase = ''
     mkdir -p $out
@@ -57,27 +51,22 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
 
     ln -s "$out/share/pje-office/pjeOffice.sh" "$out/bin/pje-office"
+    ln -s "$out/share/pje-office/pjeOffice.sh" "$out/bin/pjeOffice"
 
     # Otherwise it looks "suspicious"
     chmod -R g-w $out
   '';
 
-  # postFixup = ''
-  #   for file in $(find $out -type f \( -perm /0111 -o -name \*.so\* -or -name \*.node\* \) ); do
-  #     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$file" || true
-  #     patchelf --set-rpath ${rpath}:$out/share/skypeforlinux $file || true
-  #   done
+  postFixup = ''
+    # for file in $(find $out -type f \( -perm /0111 -o -name \*.so\* -or -name \*.node\* \) ); do
+    #   patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$file" || true
+    #   patchelf --set-rpath ${rpath}:$out/share/skypeforlinux $file || true
+    # done
 
-  #   # Fix the desktop link
-  #   substituteInPlace $out/share/applications/skypeforlinux.desktop \
-  #     --replace /usr/bin/ ""
-  #   substituteInPlace $out/share/applications/skypeforlinux-share.desktop \
-  #     --replace /usr/bin/ ""
-  #   substituteInPlace $out/share/kservices5/ServiceMenus/skypeforlinux.desktop \
-  #     --replace /usr/bin/ ""
-  # '';
-
-
+    # Fix the desktop link
+    substituteInPlace $out/share/pje-office/shortcuts/pje-office.desktop \
+      --replace /usr/bin/ ""
+  '';
 
   meta = with lib; {
     description = "Aplicativo nativo utilizado para realizar assinatura digitais.";

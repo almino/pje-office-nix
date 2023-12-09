@@ -1,6 +1,9 @@
 ## Histórico de comandos
 
 1. `dpkg -I pje-office_amd64.deb`
+2. `sudo rm --interactive=once --recursive result`
+3. `nix-build --impure`
+4. `result/bin/pje-office`
 
 ## Links úteis
 
