@@ -2,6 +2,7 @@
 , fetchurl
 , glib
 , glibc
+, temurin-jre-bin
 , lib
 , libsecret
 , libuuid
@@ -28,6 +29,8 @@ stdenv.mkDerivation rec {
     url = "https://cnj-pje-programs.s3-sa-east-1.amazonaws.com/pje-office/pje-office_amd64.deb";
     sha256 = "sha256-GoO3nShHKnndQXKK8YSGn9+hH0WHsIjkRptyQqv7QZc=";
   };
+
+  runtimeDependencies = [ temurin-jre-bin ];
 
   nativeBuildInputs = [ wrapGAppsHook glib ];
 
@@ -66,6 +69,12 @@ stdenv.mkDerivation rec {
     # Fix the desktop link
     substituteInPlace $out/share/pje-office/shortcuts/pje-office.desktop \
       --replace /usr/bin/ ""
+
+    # Fix the shell script
+    substituteInPlace $out/share/pje-office/pjeOffice.sh \
+      --replace ./jre/bin/java "${temurin-jre-bin}/bin/java"
+    substituteInPlace $out/share/pje-office/pjeOffice.sh \
+      --replace pjeOffice.jar "$out/share/pje-office/pjeOffice.jar"
   '';
 
   meta = with lib; {
