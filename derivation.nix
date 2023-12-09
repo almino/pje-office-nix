@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-GoO3nShHKnndQXKK8YSGn9+hH0WHsIjkRptyQqv7QZc=";
   };
 
-  nativeBuildInputs = [ wrapGAppsHook ];
+  nativeBuildInputs = [ wrapGAppsHook glib ];
 
   buildInputs = [ dpkg ];
 
@@ -54,8 +54,9 @@ stdenv.mkDerivation rec {
     dpkg -x $src $out
     cp -av $out/usr/* $out
     rm -rf $out/opt $out/usr
+    mkdir -p $out/bin
 
-    # ln -s "$out/share/pje-office/pjeOffice.sh" "$out/bin/pje-office"
+    ln -s "$out/share/pje-office/pjeOffice.sh" "$out/bin/pje-office"
 
     # Otherwise it looks "suspicious"
     chmod -R g-w $out
